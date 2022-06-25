@@ -10,7 +10,7 @@
 * Installing powerlevel10k.
 * ... and so much more!
 
-### Watch how it works!
+### Watch it work!
 "Here is where I'll put a video of how it works"
 
 ### Installation instructions:
