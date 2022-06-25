@@ -30,7 +30,15 @@ Report the bug as an issue, make sure to give me as much information as possible
 Tell me the suggestion using the Issues functionality, make sure to tell me why this should be implemented.
 
 ### Known Issues:
-* [x] None so far.
+* [] When the script sometimes uses 'echo' it fails (and even starts running commands that it isn't suppost to).
+* [] Doesn't prompt user to enter their password (supposed to set shell for root).
+
+### Plans for the future:
+* [] Automaticly make MesloLGS NF the default font of Gnome Terminal.
+* [] Automaticly install color schemes.
+* [] Automaticly disable the 'Fedora Flatpaks' repository.
+* [] Prompt user and install extenions for them.
+* [] Open the Powerlevel10k in the current terminal.
 
 ### Buy me a bird:
 Buy me a bird [here](https://www.buymeacoffee.com/Excalian) (it would be really nice to have another feathered friend around)!
