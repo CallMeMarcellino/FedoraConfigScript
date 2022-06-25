@@ -30,7 +30,7 @@ Report the bug as an issue, make sure to give me as much information as possible
 Tell me the suggestion using the Issues functionality, make sure to tell me why this should be implemented.
 
 ### Known Issues:
-* None so far.
+* [x] None so far.
 
 ### Buy me a bird:
 Buy me a bird [here](https://www.buymeacoffee.com/Excalian) (it would be really nice to have another feathered friend around)!
