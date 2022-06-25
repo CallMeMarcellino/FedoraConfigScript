@@ -1,5 +1,5 @@
-## Fedora Configuration Script
-### A bash script that configures Fedora
+# Fedora Configuration Script
+## A bash script that configures Fedora
 
 ### This bash script does everything that I would do after I install Fedora Linux A few things it does are:
 * Removing useless bloat
