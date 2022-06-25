@@ -40,5 +40,5 @@ Tell me the suggestion using the Issues functionality, make sure to tell me why 
 * [ ] Prompt user and install extenions for them.
 * [ ] Open the Powerlevel10k in the current terminal.
 
-### Buy me a bird:
-Buy me a bird [here](https://www.buymeacoffee.com/Excalian) (it would be really nice to have another feathered friend around)!
+### Buy me a birdt reat:
+Buy a treat for my bird [here](https://www.buymeacoffee.com/Excalian) (it would be really nice to have another feathered friend around)!
