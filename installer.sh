@@ -46,19 +46,7 @@ dnf remove firefox
 
 # Adding Zsh:
 dnf install zsh
-echo "# Lines added by powerlevel10k
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r '${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh' ]]; then
-  source '${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh'
-fi
-source ~/powerlevel10k/powerlevel10k.zsh-theme
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-# End of lines added by powerlevel10k
-
-# Lines configured by zsh-newuser-install
+echo "# Lines configured by zsh-newuser-install
 HISTFILE=~/.histfile
 HISTSIZE=10000
 SAVEHIST=15000
@@ -71,6 +59,8 @@ autoload -Uz compinit
 compinit
 # End of lines added by compinstall" >> ~/.zshrc
 
+chsh -s $(which zsh)
+
 # Adding Powerlevel10k:
 sudo -u $(whoami) git clone https://github.com/romkatv/powerlevel10k-media/
 
@@ -79,17 +69,24 @@ mv powerlevel10k-media/"MesloLGS NF Bold.ttf" /usr/local/share/fonts
 mv powerlevel10k-media/"MesloLGS NF Italic.ttf" /usr/local/share/fonts
 mv powerlevel10k-media/"MesloLGS NF Bold Italic.ttf" /usr/local/share/fonts
 
+fc-cache -f -v
+
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
+echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
 
 # Ending:
+echo -n "\n\nNow you can install any gnome extension(s) that you would want through Extension's manager!
 
-echo "
+I recommend that you first open the Software application and diable the 'Fedora Flatpaks' repository, since you don't need it.
 
-Now you can install any gnome extension(s) that you would want through Extension's manager!
-I recommend that you first open the Software application and diable the 'Fedora Flatpaks' repository, since you don
-t need it.
 You might also find it nice to install the RPMSphere repositories.
 
 Lastly, if you want to install any terminal color schemes just run bash -c  '$(wget -qO- https://git.io/vQgMr)'.
 PS: The Next time you open a terminal, you'll be met with the Powerlevel10k configuration tool. Therefore, you should try making MesloLGS NF as your default font in Gnome Terminal.
+
+Now could you enter your password so that I can set Zsh as your default shell (on your next login ofcourse).
 "
+
+chsh -s $(which zsh)
+
+echo "Now I just need you to reboot."
