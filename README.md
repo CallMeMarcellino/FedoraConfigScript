@@ -39,6 +39,3 @@ Tell me the suggestion using the Issues functionality, make sure to tell me why 
 * [ ] Automaticly disable the 'Fedora Flatpaks' repository.
 * [ ] Prompt user and install extenions for them.
 * [ ] Open the Powerlevel10k in the current terminal.
-
-### Buy me a birdt reat:
-Buy a treat for my bird [here](https://www.buymeacoffee.com/Excalian) (it would be really nice to have another feathered friend around)!
