@@ -35,6 +35,7 @@ Tell me the suggestion using the Issues functionality, make sure to tell me why 
 
 ### Plans for the future:
 * [ ] Automaticly make MesloLGS NF the default font of Gnome Terminal.
+* [ ] If there was an error, save place and autoload script when it is run.
 * [ ] Automaticly install color schemes.
 * [ ] Automaticly disable the 'Fedora Flatpaks' repository.
 * [ ] Prompt user and install extenions for them.
