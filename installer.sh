@@ -1,52 +1,45 @@
 #!/usr/bin/env bash
 
-# Removing then useless bloat:
-echo 'Removing the useless bloat'
-sudo -u $(whoami) dnf remove -y cheese gnome-contact libreoffice-writer libreoffice-calc libreoffice-impress gnome-photos rhythmbox gnome-system-monitor gnome-text-editor gnome-tour totem
-
-# Adding these configuration options to the DNF config:
-echo 'Configuring DNF'
-echo 'added by $(whoami)
+# Config (Please look at the documemation at "LINK".)
+packagesToRemove=(
+    "cheese"
+    "gnome-contact"
+    "libreoffice-writer"
+    "libreoffice-calc"
+    "libreoffice-impress"
+    "gnome-photos"
+    "rhythmbox"
+    "gnome-system-monitor"
+    "gnome-text-editor"
+    "gnome-tour"
+    "totem"
+)
+DNFConfig="added by $(whoami)
 max_parallel_downloads=10
-defaultyes=True' >> /etc/dnf/dnf.conf
-
-# Do the RPM Fusion configuration:
-echo 'Configuring RPM Fusion'
-dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
-dnf groupupdate -y core
-dnf groupupdate -y multimedia --setop="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin
-dnf groupupdate -y sound-and-video
-dnf install -y rpmfusion-free-release-tainted
-dnf install -y libdvdcss
-dnf install -y rpmfusion-nonfree-release-tainted
-dnf install -y \*-firmware
-
-# Updates the computer:
-echo 'Updating the computer'
-dnf update -y
-dnf upgrade -y
-
-# Adding Flatpak repos:
-echo 'Adding the Flathub repositories to Flatpak'
-sudo -u $(whoami) flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-sudo -u $(whoami) flatpak remote-add --user --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
-
-# Installing cool packages:
-sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
-
-dnf install -y vlc steam gnome-tweaks helvum easyeffects wine bottles pipewire0.2-libs pipewire-doc pipewire-plugin-libcamera papirus-icon-theme util-linux-user discord code git gh
-flatpak install com.mattjakeman.ExtensionManager
-flatpak install org.polymc.PolyMC
-flatpak install net.davidotek.pupgui2
-
-# Replacing Firefox with Google Chrome:
-dnf install google-chrome
-dnf remove firefox
-
-# Adding Zsh:
-dnf install zsh
-echo "# Lines configured by zsh-newuser-install
+defaultyes=True"
+packagesToInstall=(
+    "vlc"
+    "steam"
+    "gnome-tweaks"
+    "helvum"
+    "easyeffects"
+    "wine"
+    "bottles"
+    "pipewire0.2-libs"
+    "pipewire-doc"
+    "pipewire-plugin-libcamera"
+    "papirus-icon-theme"
+    "discord"
+    "gh"
+)
+flatpakPackagesToInstall=(
+    "com.mattjakeman.ExtensionManager"
+    "org.polymc.PolyMC"
+    "net.davidotek.pupgui2"
+)
+browserToInstall="google-chrome-stable"
+installZSH=True
+ZSHRCContents="# Lines configured by zsh-newuser-install
 HISTFILE=~/.histfile
 HISTSIZE=10000
 SAVEHIST=15000
@@ -57,36 +50,100 @@ setopt notify
 zstyle :compinstall filename '/home/lino/.zshrc'
 autoload -Uz compinit
 compinit
-# End of lines added by compinstall" >> ~/.zshrc
+# End of lines added by compinstall"
 
-chsh -s $(which zsh)
+# Checking if script is running in root.
+if [ "$EUID" -ne 0 ] then
+    echo -n "Please run as root (aka use sudo)."
+    exit 1
+fi
 
-# Adding Powerlevel10k:
-sudo -u $(whoami) git clone https://github.com/romkatv/powerlevel10k-media/
+# Starting
+printf "You have started Excalian's Fedora Config Script!\n\nWould you like to start the installation (Y/n)? "
+read prompt1
+printf '\n\n'
+if [[ -z ${prompt1} ]] || [[ ${prompt1} == 'n' ]] then
+    printf "Okay, I'll boot you out of the script.\n\n"
+    exit 1
+else if [[ ${prompt} == 'y']]
+    printf "I'll get you started right away!\n\n"
+fi
 
-mv powerlevel10k-media/"MesloLGS NF Regular.ttf" /usr/local/share/fonts
-mv powerlevel10k-media/"MesloLGS NF Bold.ttf" /usr/local/share/fonts
-mv powerlevel10k-media/"MesloLGS NF Italic.ttf" /usr/local/share/fonts
-mv powerlevel10k-media/"MesloLGS NF Bold Italic.ttf" /usr/local/share/fonts
+# Removing then useless bloat:
+printf "Now I'll start removing all the useless bloat.\n\n"
+sudo -u $(whoami) dnf remove -y ${packagesToRemove}
 
-fc-cache -f -v
+# Adding these configuration options to the DNF config:
+printf "Next up I'll be configuring the DNF package manager, could you tell me if you've already configured DNF? (y/N) "
+if [[-z ${prompt2}]] || [[${prompt2} == 'n']] then
+    printf "\n\nGreat! I'll add our configuration right now!"
+    printf '\n$DNFConfig' >> /etc/dnf/dnf.conf
+else if [[${prompt2} == 'y']] then
+    printf 
+fi
 
-git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
-echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
+# Updating your computer:
+printf "\n\nRight now, I'll update your computer.\n\nThis'll take a while, so please be patient.\n\n"
+sudo -u $(whoami) dnf update -y
+sudo -u $(whoami) dnf upgrade -y
+
+# Installing the RPM Fusion configuration:
+printf "\n\nThank you for your patients! Now I'll install the RPM Fusion configuration."
+sudo -u $(whoami) dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+sudo -u $(whoami) dnf groupupdate -y core
+sudo -u $(whoami) dnf groupupdate -y multimedia --setop="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin
+sudo -u $(whoami) dnf groupupdate -y sound-and-video
+sudo -u $(whoami) dnf install -y rpmfusion-free-release-tainted
+sudo -u $(whoami) dnf install -y libdvdcss
+sudo -u $(whoami) dnf install -y rpmfusion-nonfree-release-tainted
+sudo -u $(whoami) dnf install -y \*-firmware
+
+# Adding Flatpak repos:
+printf "\n\nNow I'll be adding the Flatpak repositories."
+sudo -u $(whoami) flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+sudo -u $(whoami) flatpak remote-add --user --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
+
+# Installing VSCode:
+printf "\n\nWould you like me to install VSCode? (y/N) "
+read prompt3
+if [[prompt3 == 'y']] then
+    printf "\n Okay, I will install VSCode right now."
+    sudo -u $(whoami) rpm --import https://packages.microsoft.com/keys/microsoft.asc
+    sudo -u $(whoami) sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
+    sudo -u $(whoami) dnf install -y code
+else
+    printf "Okay, I won't install VSCode."
+fi
+
+# Now I'll install a few packages:
+printf "\n\nNow I'll install a few packages!\n\n"
+sudo -u $(whoami) dnf install -y git util-linux-user $packagesToInstall
+for flatpak in $flatpakPackagesToInstall do
+    flatpak install "${flatpak}"
+done
+
+# Replacing Firefox with something else.
+printf "\n\nNow I'll replace Firefox with the package '$browserToInstall'."
+sudo -u $(whoami) dnf remove firefox
+sudo -u $(whoami) dnf install $browserToInstall
+
+# Adding Zsh:
+printf "\n\nNow I'll be installing ZSH if you configured me to do that."
+if [[ $installZSH == True ]] then
+    echo $ZSHRCContents >> ~/.zshrc
+    sudo -u $(whoami) chsh -s $(which zsh)
+fi
+
+# Installing Powerlevel10k (This part has been scrapped, so yeh.):
+# cd ~
+# sudo -u $(whoami) git clone https://github.com/romkatv/powerlevel10k-media/
+# mv powerlevel10k-media/"MesloLGS NF Regular.ttf" /usr/local/share/fonts
+# mv powerlevel10k-media/"MesloLGS NF Bold.ttf" /usr/local/share/fonts
+# mv powerlevel10k-media/"MesloLGS NF Italic.ttf" /usr/local/share/fonts
+# mv powerlevel10k-media/"MesloLGS NF Bold Italic.ttf" /usr/local/share/fonts
+# fc-cache -f -v
+# git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
+# echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
 
 # Ending:
-echo -n "\n\nNow you can install any gnome extension(s) that you would want through Extension's manager!
-
-I recommend that you first open the Software application and diable the 'Fedora Flatpaks' repository, since you don't need it.
-
-You might also find it nice to install the RPMSphere repositories.
-
-Lastly, if you want to install any terminal color schemes just run bash -c  '$(wget -qO- https://git.io/vQgMr)'.
-PS: The Next time you open a terminal, you'll be met with the Powerlevel10k configuration tool. Therefore, you should try making MesloLGS NF as your default font in Gnome Terminal.
-
-Now could you enter your password so that I can set Zsh as your default shell (on your next login ofcourse).
-"
-
-chsh -s $(which zsh)
-
-echo "Now I just need you to reboot."
+printf "\n\n Now you're done, it is recommended to restart your PC and to check out our wiki on what to do next."
