@@ -30,7 +30,7 @@ Report the bug as an issue, make sure to give me as much information as possible
 Tell me the suggestion using the Issues functionality, make sure to tell me why this should be implemented.
 
 ### Known Issues:
-* [x] When the script sometimes uses 'echo' it fails (and even starts running commands that it isn't suppost to).
+* [x] Fixed on July 2, 2022: When the script sometimes uses 'echo' it fails (and even starts running commands that it isn't suppost to).
 
 ### Plans for the future:
 * [ ] Automaticly make MesloLGS NF the default font of Gnome Terminal.
