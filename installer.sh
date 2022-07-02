@@ -1,56 +1,8 @@
 #!/usr/bin/env bash
 
-# Config (Please look at the documemation at "LINK".)
-packagesToRemove=(
-    "cheese"
-    "gnome-contact"
-    "libreoffice-writer"
-    "libreoffice-calc"
-    "libreoffice-impress"
-    "gnome-photos"
-    "rhythmbox"
-    "gnome-system-monitor"
-    "gnome-text-editor"
-    "gnome-tour"
-    "totem"
-)
-DNFConfig="added by $(whoami)
-max_parallel_downloads=10
-defaultyes=True"
-packagesToInstall=(
-    "vlc"
-    "steam"
-    "gnome-tweaks"
-    "helvum"
-    "easyeffects"
-    "wine"
-    "bottles"
-    "pipewire0.2-libs"
-    "pipewire-doc"
-    "pipewire-plugin-libcamera"
-    "papirus-icon-theme"
-    "discord"
-    "gh"
-)
-flatpakPackagesToInstall=(
-    "com.mattjakeman.ExtensionManager"
-    "org.polymc.PolyMC"
-    "net.davidotek.pupgui2"
-)
-browserToInstall="google-chrome-stable"
-installZSH=True
-ZSHRCContents="# Lines configured by zsh-newuser-install
-HISTFILE=~/.histfile
-HISTSIZE=10000
-SAVEHIST=15000
-setopt notify
-# End of lines configured by zsh-newuser-install
-
-# The following lines were added by compinstall
-zstyle :compinstall filename '/home/lino/.zshrc'
-autoload -Uz compinit
-compinit
-# End of lines added by compinstall"
+if [[ -e ${config.sh} ]] then
+    source config.sh
+fi
 
 # Checking if script is running in root.
 if [ "$EUID" -ne 0 ] then
@@ -71,15 +23,24 @@ fi
 
 # Removing then useless bloat:
 printf "Now I'll start removing all the useless bloat.\n\n"
-sudo -u $(whoami) dnf remove -y ${packagesToRemove}
+if [[ -z {$packagesToInstall} ]] then
+    sudo -u $(whoami) dnf remove -y cheese gnome-contact libreoffice-writer libreoffice-ca cheese gnome-contact libreoffice-writer libreoffice-calc libreoffice-impress gnome-photos rhythmbox gnome-system-monitor gnome-text-editor gnome-tour totem
+else
+    sudo -u $(whoami) dnf remove -y ${packagesToRemove}
+fi
 
 # Adding these configuration options to the DNF config:
 printf "Next up I'll be configuring the DNF package manager, could you tell me if you've already configured DNF? (y/N) "
 if [[-z ${prompt2}]] || [[${prompt2} == 'n']] then
-    printf "\n\nGreat! I'll add our configuration right now!"
-    printf '\n$DNFConfig' >> /etc/dnf/dnf.conf
+    printf "\n\nGreat! I'll add the configuration right now!"
+    if [[ -z ${DNFConfig}]]
+    echo "added by $(whoami)
+max_parallel_downloads=10
+defaultyes=True" >> /etc/dnf/dnf.conf
+    else
+    echo "$DNFCONFIG" >> /etc/dnf/dnf.conf
 else if [[${prompt2} == 'y']] then
-    printf 
+    printf "Okay, I'll skip this part then!"
 fi
 
 # Updating your computer:
@@ -117,21 +78,52 @@ fi
 
 # Now I'll install a few packages:
 printf "\n\nNow I'll install a few packages!\n\n"
-sudo -u $(whoami) dnf install -y git util-linux-user $packagesToInstall
-for flatpak in $flatpakPackagesToInstall do
-    flatpak install "${flatpak}"
-done
+if [[ -z ${packagesToInstall} ]] then
+    sudo -u $(whoami) dnf install -y git util-linux-user vlc steam gnome-tweaks helvum easyeffects wine bottles pipewire0.2-libs pipewire-doc pipewire-plugin-libcamera papirus-icon-theme discord gh
+else
+    sudo -u $(whoami) dnf install -y git util-linux-user $packagesToInstall
+fi
+printf "\n\nNow I'll install Flatpak packages."
+if [[ -z ${flatpakPackagesToInstall} ]] then
+    flatpak install com.mattjakeman.ExtensionManager
+    flatpak install org.polymc.PolyMC
+    flatpak install net.davidotek.pupgui2
+else
+    for flatpak in $flatpakPackagesToInstall do
+        flatpak install "${flatpak}"
+    done
+fi
 
 # Replacing Firefox with something else.
-printf "\n\nNow I'll replace Firefox with the package '$browserToInstall'."
-sudo -u $(whoami) dnf remove firefox
-sudo -u $(whoami) dnf install $browserToInstall
-
+if [[ -z $browserToInstall ]] then
+    printf "\n\nNow I'll replace Firefox with the package 'google-chrome-stable'."
+    sudo -u $(whoami) dnf install google-chrome-stable
+    sudo -u $(whoami) dnf remove firefox
+else
+    printf "\n\nNow I'll replace Firefox with the package '$browserToInstall'."
+    sudo -u $(whoami) dnf install $browserToInstall
+    sudo -u $(whoami) dnf remove firefox
+fi
 # Adding Zsh:
 printf "\n\nNow I'll be installing ZSH if you configured me to do that."
 if [[ $installZSH == True ]] then
-    echo $ZSHRCContents >> ~/.zshrc
-    sudo -u $(whoami) chsh -s $(which zsh)
+    if [[ -z $ZSHRCContents ]] then
+        echo "# Lines configured by zsh-newuser-install
+HISTFILE=~/.histfile
+HISTSIZE=10000
+SAVEHIST=15000
+setopt notify
+# End of lines configured by zsh-newuser-install
+
+# The following lines were added by compinstall
+zstyle :compinstall filename '/home/lino/.zshrc'
+autoload -Uz compinit
+compinit
+# End of lines added by compinstall" >> ~/.zshrc
+        sudo -u $(whoami) chsh -s $(which zsh)
+    else
+        echo $ZSHRCContents >> ~/.zshrc
+        sudo -u $(whoami) chsh -s $(which zsh)
 fi
 
 # Installing Powerlevel10k (This part has been scrapped, so yeh.):
@@ -146,4 +138,4 @@ fi
 # echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
 
 # Ending:
-printf "\n\n Now you're done, it is recommended to restart your PC and to check out our wiki on what to do next."
+printf "\n\n Now you're done, it is recommended to restart your PC/Shell and to check out our wiki on what to do next."
