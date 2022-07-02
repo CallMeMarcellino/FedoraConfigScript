@@ -23,10 +23,10 @@ fi
 
 # Removing then useless bloat:
 printf "Now I'll start removing all the useless bloat.\n\n"
-if [[ -z {$packagesToInstall} ]] then
-    sudo -u $(whoami) dnf remove -y cheese gnome-contact libreoffice-writer libreoffice-ca cheese gnome-contact libreoffice-writer libreoffice-calc libreoffice-impress gnome-photos rhythmbox gnome-system-monitor gnome-text-editor gnome-tour totem
+if [[ -z {$packagesToRemove} ]] then
+    dnf remove -y git util-linux-user cheese gnome-contact libreoffice-writer libreoffice-calc libreoffice-impress gnome-photos rhythmbox gnome-system-monitor gnome-text-editor gnome-tour totem
 else
-    sudo -u $(whoami) dnf remove -y ${packagesToRemove}
+    dnf remove -y git util-linux-user${packagesToRemove}
 fi
 
 # Adding these configuration options to the DNF config:
@@ -45,8 +45,8 @@ fi
 
 # Updating your computer:
 printf "\n\nRight now, I'll update your computer.\n\nThis'll take a while, so please be patient.\n\n"
-sudo -u $(whoami) dnf update -y
-sudo -u $(whoami) dnf upgrade -y
+dnf update -y
+dnf upgrade -y
 
 # Installing the RPM Fusion configuration:
 printf "\n\nThank you for your patients! Now I'll install the RPM Fusion configuration."
@@ -61,8 +61,8 @@ sudo -u $(whoami) dnf install -y \*-firmware
 
 # Adding Flatpak repos:
 printf "\n\nNow I'll be adding the Flatpak repositories."
-sudo -u $(whoami) flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-sudo -u $(whoami) flatpak remote-add --user --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
+flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak remote-add --user --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
 
 # Installing VSCode:
 printf "\n\nWould you like me to install VSCode? (y/N) "
