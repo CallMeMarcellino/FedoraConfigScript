@@ -1,3 +1,5 @@
+# ⚠️ This project is archived ⚠️
+
 # Fedora Configuration Script
 ## A bash script that configures Fedora
 
